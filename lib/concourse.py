@@ -72,6 +72,7 @@ def do_out() -> None:
         var_file_paths = input_payload['params']['var_files']
     if 'vars' in input_payload['params']:
         vars = input_payload['params']['vars']
+    lib.packer.version()
     lib.packer.validate(
         template_file_path,
         var_file_paths=var_file_paths,

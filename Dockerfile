@@ -13,6 +13,9 @@ RUN wget -O /tmp/packer.zip \
 
 # RUN pip3 --no-cache-dir install -r /app/requirements.txt
 
+# DEBUG -- copy test template file
+# COPY test/data/template.json /opt/resource/
+
 # copy scripts
 COPY \
   bin/check \
