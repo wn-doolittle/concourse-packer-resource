@@ -2,7 +2,7 @@
 import json
 import os
 import sys
-from typing import Any
+from typing import Any, Dict, List, Optional
 
 # local
 import lib.packer
@@ -15,10 +15,18 @@ from lib.log import log
 # =============================================================================
 
 # =============================================================================
-# _get_dir_path_from_input
+# _get_working_dir_path
 # =============================================================================
-def _get_dir_path_from_input() -> str:
+def _get_working_dir_path() -> str:
     return sys.argv[1]
+
+
+# =============================================================================
+# _get_working_dir_file_path
+# =============================================================================
+def _get_working_dir_file_path(
+        working_dir_path: str, file_name: str) -> str:
+    return os.path.join(working_dir_path, file_name)
 
 
 # =============================================================================
@@ -33,14 +41,6 @@ def _read_payload(stream=sys.stdin) -> Any:
 # =============================================================================
 def _write_payload(payload: Any, stream=sys.stdout) -> None:
     json.dump(payload, stream)
-
-
-# =============================================================================
-# _get_repository_file_path
-# =============================================================================
-def _get_repository_file_path(
-        repository_dir_path: str, file_name: str) -> str:
-    return os.path.join(repository_dir_path, file_name)
 
 
 # =============================================================================
@@ -64,8 +64,18 @@ def do_in() -> None:
 
 
 def do_out() -> None:
-    # input_payload = _read_payload()
-    # lib.packer.validate('example.json')
+    input_payload = _read_payload()
+    template_file_path: str = input_payload['params']['template']
+    var_file_paths: Optional[List[str]] = None
+    vars: Optional[Dict] = None
+    if 'var_files' in input_payload['params']:
+        var_file_paths = input_payload['params']['var_files']
+    if 'vars' in input_payload['params']:
+        vars = input_payload['params']['vars']
+    lib.packer.validate(
+        template_file_path,
+        var_file_paths=var_file_paths,
+        vars=vars)
     _write_payload({
         "version": {
             'ami': 'ami-00000000000000000'
