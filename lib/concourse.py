@@ -77,8 +77,12 @@ def do_out() -> None:
         template_file_path,
         var_file_paths=var_file_paths,
         vars=vars)
-    _write_payload({
-        "version": {
-            'ami': 'ami-00000000000000000'
-        }
-    })
+    lib.packer.build(
+        template_file_path,
+        var_file_paths=var_file_paths,
+        vars=vars)
+    # _write_payload({
+    #     "version": {
+    #         'ami': 'ami-00000000000000000'
+    #     }
+    # })

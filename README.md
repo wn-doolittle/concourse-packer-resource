@@ -20,9 +20,7 @@ a [concourse-ci](https://concourse-ci.org) resource for building [amazon machine
 
 - `vars`: _optional_. dict of explicit packer variable key/value pairs.
 
-**warning**: python will print the values of the packer command line arguments when a packer command fails
-
-while 'secret variables' will be sanitized from packer output, if specified as `vars`, these values will not be sanitized by python's error output and thus may be visible in concourse logs
+**note**: in an effort to prevent credentials leaking to logs, the packer command line will not be printed on failure -- however, you should still mark any relevant variables as _sensitive variables_ in the packer template to prevent packer from printing them in log output
 
 ## examples
 
