@@ -216,7 +216,8 @@ def version() -> None:
 def validate(
         template_file_path: str,
         var_file_paths: List[str] = None,
-        vars: dict = None) -> None:
+        vars: dict = None,
+        debug: bool = False) -> None:
     packer_command_args = []
     # add any specified var file paths
     if var_file_paths:
@@ -226,6 +227,10 @@ def validate(
     if vars:
         for var_name, var_value in vars.items():
             packer_command_args.append(f"-var={var_name}={var_value}")
+    # dump args on debug
+    if debug:
+        log('validate args:')
+        log_pretty(packer_command_args)
     # execute validate command
     _packer(
         'validate',
@@ -239,7 +244,8 @@ def validate(
 def build(
         template_file_path: str,
         var_file_paths: List[str] = None,
-        vars: dict = None) -> dict:
+        vars: dict = None,
+        debug: bool = False) -> dict:
     packer_command_args = []
     # add any specified var file paths
     if var_file_paths:
@@ -249,6 +255,10 @@ def build(
     if vars:
         for var_name, var_value in vars.items():
             packer_command_args.append(f"-var={var_name}={var_value}")
+    # dump args on debug
+    if debug:
+        log('build args:')
+        log_pretty(packer_command_args)
     # execute build command
     packer_command_result = _packer(
         'build',

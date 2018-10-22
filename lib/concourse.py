@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional
 
 # local
 import lib.packer
+from lib.log import log, log_pretty
 
 
 # =============================================================================
@@ -105,6 +106,8 @@ def do_in() -> None:
 def do_out() -> None:
     # read the concourse input payload
     input_payload = _read_payload()
+    # get debug setting from payload
+    debug_enabled: bool = input_payload['params'].get('debug', False)
     # get the relative template file path from the payload
     relative_template_file_path: str = input_payload['params']['template']
     # get the working dir path from the input
@@ -126,20 +129,36 @@ def do_out() -> None:
     # add vars, if provided
     if 'vars' in input_payload['params']:
         vars = input_payload['params']['vars']
+    # dump details, if debug enabled
+    if debug_enabled:
+        log('var_file_paths:')
+        log_pretty(var_file_paths)
+        log('vars:')
+        log_pretty(vars)
     # dump the current packer version
     lib.packer.version()
     # validate the template
     lib.packer.validate(
         template_file_path,
         var_file_paths=var_file_paths,
-        vars=vars)
+        vars=vars,
+        debug=debug_enabled)
     # build the template, getting the build manifest back
     build_manifest = lib.packer.build(
         template_file_path,
         var_file_paths=var_file_paths,
-        vars=vars)
+        vars=vars,
+        debug=debug_enabled)
+    # dump build manifest, if debug
+    if debug_enabled:
+        log('build manifest:')
+        log_pretty(build_manifest)
     # convert the manifest into a concourse output payload
     output_payload = _create_concourse_out_payload_from_packer_build_manifest(
         build_manifest)
+    # dump output payload, if debug
+    if debug_enabled:
+        log('output payload:')
+        log_pretty(output_payload)
     # write out the payload
     _write_payload(output_payload)

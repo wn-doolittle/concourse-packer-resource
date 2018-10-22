@@ -28,6 +28,8 @@ a [concourse-ci](https://concourse-ci.org) resource for building images via [pac
 
 - `vars`: _optional_. dict of explicit packer variable key/value pairs.
 
+- `debug`: _optional_. set to `true` to dump argument values and parsed output. **may result in leaked credentials**. default: `false`
+
 the id of the first artifact produced will be used as the version, with the full artifact details in the output metadata
 
 **note**: in an effort to prevent credentials leaking to logs, the full packer command line will not be printed on failure -- however, you should still mark any relevant variables as _sensitive variables_ in the packer template to prevent packer from printing them in log output
