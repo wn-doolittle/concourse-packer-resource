@@ -1,16 +1,24 @@
 # concourse packer resource
 
-a [concourse-ci](https://concourse-ci.org) resource for building [amazon machine images](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) (AMIs) via [packer](https://www.packer.io/docs/builders/amazon.html)
+a [concourse-ci](https://concourse-ci.org) resource for building images via [packer](https://www.packer.io/docs/builders/amazon.html)
 
 ## table of contents
 
 - [behavior](#behavior)
 
-	- [out](#out-build-a-new-ami)
+	- [check](#check-not-implemented)
+
+	- [in](#in-not-implemented)
+
+	- [out](#out-build-a-new-image)
 
 ## behaviour
 
-### `out`: build a new ami
+### `check`: not implemented
+
+### `in`: not implemented
+
+### `out`: build a new image
 
 **parameters**
 
@@ -20,7 +28,9 @@ a [concourse-ci](https://concourse-ci.org) resource for building [amazon machine
 
 - `vars`: _optional_. dict of explicit packer variable key/value pairs.
 
-**note**: in an effort to prevent credentials leaking to logs, the packer command line will not be printed on failure -- however, you should still mark any relevant variables as _sensitive variables_ in the packer template to prevent packer from printing them in log output
+the id of the first artifact produced will be used as the version, with the full artifact details in the output metadata
+
+**note**: in an effort to prevent credentials leaking to logs, the full packer command line will not be printed on failure -- however, you should still mark any relevant variables as _sensitive variables_ in the packer template to prevent packer from printing them in log output
 
 ## examples
 

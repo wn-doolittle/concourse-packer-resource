@@ -1,7 +1,7 @@
 # stdlib
 import sys
 from typing import Any
-from pprint import PrettyPrinter, pprint
+from pprint import PrettyPrinter
 
 
 # =============================================================================
@@ -13,8 +13,8 @@ from pprint import PrettyPrinter, pprint
 # =============================================================================
 # log
 # =============================================================================
-def log(value: Any, stream=sys.stderr, **kwargs) -> None:
-    print(value, file=stream, **kwargs)
+def log(value: Any, **kwargs) -> None:
+    print(value, file=sys.stderr, **kwargs)
 
 
 # =============================================================================
@@ -23,6 +23,9 @@ def log(value: Any, stream=sys.stderr, **kwargs) -> None:
 #       can-i-make-pprint-in-python3-not-split-strings-like-in-python2
 # =============================================================================
 class NoStringWrappingPrettyPrinter(PrettyPrinter):
+    def __init_(self, *args, **kwargs) -> None:
+        super().__init__(self, *args, **kwargs)
+
     def _format(self, object, *args) -> None:
         if isinstance(object, str):
             width = self._width
@@ -38,5 +41,5 @@ class NoStringWrappingPrettyPrinter(PrettyPrinter):
 # =============================================================================
 # log_pretty
 # =============================================================================
-def log_pretty(value: Any, stream=sys.stderr) -> None:
-    NoStringWrappingPrettyPrinter(stream=stream).pprint(value)
+def log_pretty(value: Any) -> None:
+    NoStringWrappingPrettyPrinter(stream=sys.stderr).pprint(value)

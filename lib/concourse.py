@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional
 
 # local
 import lib.packer
-from lib.log import log
+
 
 # =============================================================================
 #
@@ -44,6 +44,45 @@ def _write_payload(payload: Any, stream=sys.stdout) -> None:
 
 
 # =============================================================================
+# _create_concourse_metadata_from_build_manifest_artifact
+# =============================================================================
+def _create_concourse_metadata_from_build_manifest_artifact(
+        artifact_name: str,
+        artifact_index: str,
+        artifact: dict) -> List[dict]:
+    metadata = []
+    for key, value in artifact.items():
+        metadata.append({
+            'name': f"{artifact_name}::{artifact_index}::{key}",
+            'value': value
+        })
+    return metadata
+
+
+# =============================================================================
+# _create_concourse_out_payload_from_packer_build_manifest
+# =============================================================================
+def _create_concourse_out_payload_from_packer_build_manifest(
+        build_manifest: dict) -> dict:
+    out_payload = {
+        'version': None,
+        'metadata': []
+    }
+    for artifact_name, artifacts in build_manifest['artifacts'].items():
+        for artifact_index, artifact in artifacts.items():
+            # use first artifact as version
+            if (not out_payload['version']) and (artifact_index == '0'):
+                out_payload['version'] = {
+                    'id': artifact['id']
+                }
+            # add artifact details as metadata
+            out_payload['metadata'].extend(
+                _create_concourse_metadata_from_build_manifest_artifact(
+                    artifact_name, artifact_index, artifact))
+    return out_payload
+
+
+# =============================================================================
 #
 # public lifecycle functions
 #
@@ -51,38 +90,46 @@ def _write_payload(payload: Any, stream=sys.stdout) -> None:
 
 def do_check() -> None:
     # not implemented
-    _write_payload([{'ami': 'ami-00000000000000000'}])
+    _write_payload([{'id': '0'}])
 
 
 def do_in() -> None:
     # not implemented
     _write_payload({
         "version": {
-            'ami': 'ami-00000000000000000'
+            'id': '0'
         }
     })
 
 
 def do_out() -> None:
+    # read the concourse input payload
     input_payload = _read_payload()
+    # get the template file path from the payload
     template_file_path: str = input_payload['params']['template']
+    # instantiate the var file paths and vars lists
     var_file_paths: Optional[List[str]] = None
     vars: Optional[Dict] = None
+    # add var file paths, if provided
     if 'var_files' in input_payload['params']:
         var_file_paths = input_payload['params']['var_files']
+    # add vars, if provided
     if 'vars' in input_payload['params']:
         vars = input_payload['params']['vars']
+    # dump the current packer version
     lib.packer.version()
+    # validate the template
     lib.packer.validate(
         template_file_path,
         var_file_paths=var_file_paths,
         vars=vars)
-    lib.packer.build(
+    # build the template, getting the build manifest back
+    build_manifest = lib.packer.build(
         template_file_path,
         var_file_paths=var_file_paths,
         vars=vars)
-    # _write_payload({
-    #     "version": {
-    #         'ami': 'ami-00000000000000000'
-    #     }
-    # })
+    # convert the manifest into a concourse output payload
+    output_payload = _create_concourse_out_payload_from_packer_build_manifest(
+        build_manifest)
+    # write out the payload
+    _write_payload(output_payload)
