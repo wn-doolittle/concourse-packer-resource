@@ -168,7 +168,7 @@ def _parse_packer_parsed_output_for_build_manifest(
 # =============================================================================
 # _packer
 # =============================================================================
-def _packer(*args: str, input=None) -> List[dict]:
+def _packer(*args: str, input=None, working_dir=None) -> List[dict]:
     # runs packer bin with forced machine readable output
     process_args = [
         PACKER_BIN_FILE_PATH,
@@ -183,7 +183,8 @@ def _packer(*args: str, input=None) -> List[dict]:
             stderr=subprocess.STDOUT,  # redirect stderr to stdout
             bufsize=1,
             universal_newlines=True,
-            stdin=input) as pipe:
+            stdin=input,
+            cwd=working_dir) as pipe:
         for line in pipe.stdout:
             # parse the machine readable output as it arrives
             parsed_line = _parse_packer_machine_readable_output_line(line)
@@ -214,6 +215,7 @@ def version() -> None:
 # validate
 # =============================================================================
 def validate(
+        working_dir_path: str,
         template_file_path: str,
         var_file_paths: List[str] = None,
         vars: dict = None,
@@ -235,13 +237,15 @@ def validate(
     _packer(
         'validate',
         *packer_command_args,
-        template_file_path)
+        template_file_path,
+        working_dir=working_dir_path)
 
 
 # =============================================================================
 # build
 # =============================================================================
 def build(
+        working_dir_path: str,
         template_file_path: str,
         var_file_paths: List[str] = None,
         vars: dict = None,
@@ -263,7 +267,8 @@ def build(
     packer_command_result = _packer(
         'build',
         *packer_command_args,
-        template_file_path)
+        template_file_path,
+        working_dir=working_dir_path)
     # get build manifest from output
     packer_build_manifest = \
         _parse_packer_parsed_output_for_build_manifest(packer_command_result)

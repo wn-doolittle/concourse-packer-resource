@@ -1,0 +1,7 @@
+2018-10-24
+
+- no longer automatically appends the concourse working dir to all var file paths
+- now uses the concourse working dir as the working dir for packer
+- var file paths can now be specified as either:
+  - a path relative to the concourse working dir, or
+  - an absolute path

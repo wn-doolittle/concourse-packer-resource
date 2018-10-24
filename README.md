@@ -34,6 +34,8 @@ the id of the first artifact produced will be used as the version, with the full
 
 **note**: in an effort to prevent credentials leaking to logs, the full packer command line will not be printed on failure -- however, you should still mark any relevant variables as _sensitive variables_ in the packer template to prevent packer from printing them in log output
 
+the packer executable will have a working directory of the concourse input directory, so file paths can be relative to resources, or absolute paths
+
 ## examples
 
 ```yaml

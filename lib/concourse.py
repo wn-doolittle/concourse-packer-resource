@@ -108,24 +108,16 @@ def do_out() -> None:
     input_payload = _read_payload()
     # get debug setting from payload
     debug_enabled: bool = input_payload['params'].get('debug', False)
-    # get the relative template file path from the payload
-    relative_template_file_path: str = input_payload['params']['template']
+    # get the template file path from the payload
+    template_file_path: str = input_payload['params']['template']
     # get the working dir path from the input
     working_dir_path = _get_working_dir_path()
-    # get the absolute template file path using the working dir path
-    template_file_path = \
-        _get_working_dir_file_path(
-            working_dir_path, relative_template_file_path)
     # instantiate the var file paths and vars lists
     var_file_paths: Optional[List[str]] = None
     vars: Optional[Dict] = None
     # add var file paths, if provided
     if 'var_files' in input_payload['params']:
-        var_file_paths = []
-        for var_file_path in input_payload['params']['var_files']:
-            # modify var file paths with working directory
-            var_file_paths.append(
-                _get_working_dir_file_path(working_dir_path, var_file_path))
+        var_file_paths = input_payload['params']['var_files']
     # add vars, if provided
     if 'vars' in input_payload['params']:
         vars = input_payload['params']['vars']
@@ -139,12 +131,14 @@ def do_out() -> None:
     lib.packer.version()
     # validate the template
     lib.packer.validate(
+        working_dir_path,
         template_file_path,
         var_file_paths=var_file_paths,
         vars=vars,
         debug=debug_enabled)
     # build the template, getting the build manifest back
     build_manifest = lib.packer.build(
+        working_dir_path,
         template_file_path,
         var_file_paths=var_file_paths,
         vars=vars,
