@@ -28,6 +28,8 @@ a [concourse-ci](https://concourse-ci.org) resource for building images via [pac
 
 - `vars`: _optional_. dict of explicit packer variable key/value pairs.
 
+- `vars_from_files`: _optional_. dict of vars and file paths to use as their value.
+
 - `debug`: _optional_. set to `true` to dump argument values and parsed output. **may result in leaked credentials**. default: `false`
 
 the id of the first artifact produced will be used as the version, with the full artifact details in the output metadata
@@ -62,6 +64,8 @@ jobs:
         aws_access_key_id: ((aws_access_key_id))
         aws_secret_access_key: ((aws_secret_access_key))
         aws_region: ((aws_region))
+      vars_from_files:
+        commit_ref: my-ami-template/.git/short_ref
 ```
 
 # license

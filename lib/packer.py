@@ -159,6 +159,14 @@ def _parse_packer_parsed_output_for_build_manifest(
     return manifest
 
 
+def _read_value_from_var_file(file_path: str) -> str:
+    # read the contents of the var file
+    with(file_path) as var_file:
+        var_value = var_file.read()
+    # trim any trailing newline
+    var_value = var_value.rstrip('\n')
+    return var_value
+
 # =============================================================================
 #
 # private exe functions
@@ -219,6 +227,7 @@ def validate(
         template_file_path: str,
         var_file_paths: List[str] = None,
         vars: dict = None,
+        vars_from_files: dict = None,
         debug: bool = False) -> None:
     packer_command_args = []
     # add any specified var file paths
@@ -228,6 +237,11 @@ def validate(
     # add any specified vars
     if vars:
         for var_name, var_value in vars.items():
+            packer_command_args.append(f"-var={var_name}={var_value}")
+    # add any vars from files
+    if vars_from_files:
+        for var_name, file_path in vars_from_files.items():
+            var_value = _read_value_from_var_file(file_path)
             packer_command_args.append(f"-var={var_name}={var_value}")
     # dump args on debug
     if debug:
@@ -249,6 +263,7 @@ def build(
         template_file_path: str,
         var_file_paths: List[str] = None,
         vars: dict = None,
+        vars_from_files: dict = None,
         debug: bool = False) -> dict:
     packer_command_args = []
     # add any specified var file paths
@@ -258,6 +273,11 @@ def build(
     # add any specified vars
     if vars:
         for var_name, var_value in vars.items():
+            packer_command_args.append(f"-var={var_name}={var_value}")
+    # add any vars from files
+    if vars_from_files:
+        for var_name, file_path in vars_from_files.items():
+            var_value = _read_value_from_var_file(file_path)
             packer_command_args.append(f"-var={var_name}={var_value}")
     # dump args on debug
     if debug:

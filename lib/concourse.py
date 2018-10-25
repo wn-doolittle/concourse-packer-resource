@@ -115,12 +115,16 @@ def do_out() -> None:
     # instantiate the var file paths and vars lists
     var_file_paths: Optional[List[str]] = None
     vars: Optional[Dict] = None
+    vars_from_files: Optional[Dict] = None
     # add var file paths, if provided
     if 'var_files' in input_payload['params']:
         var_file_paths = input_payload['params']['var_files']
     # add vars, if provided
     if 'vars' in input_payload['params']:
         vars = input_payload['params']['vars']
+    # add vars from files, if provided
+    if 'vars_from_files' in input_payload['params']:
+        vars_from_files = input_payload['params']['vars_from_files']
     # dump details, if debug enabled
     if debug_enabled:
         log('var_file_paths:')
@@ -135,6 +139,7 @@ def do_out() -> None:
         template_file_path,
         var_file_paths=var_file_paths,
         vars=vars,
+        vars_from_files=vars_from_files,
         debug=debug_enabled)
     # build the template, getting the build manifest back
     build_manifest = lib.packer.build(
@@ -142,6 +147,7 @@ def do_out() -> None:
         template_file_path,
         var_file_paths=var_file_paths,
         vars=vars,
+        vars_from_files=vars_from_files,
         debug=debug_enabled)
     # dump build manifest, if debug
     if debug_enabled:

@@ -1,3 +1,10 @@
+2018-10-25
+
+- added 'vars_from_files' dict parameter to out phase
+  - will read each file path and use the contents as the specified variable
+      e.g. 'my_var: path/to/file' with contents of 'hello world'
+      will become '-var=my_var=hello world'
+
 2018-10-24
 
 - no longer automatically appends the concourse working dir to all var file paths
