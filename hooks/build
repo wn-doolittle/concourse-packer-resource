@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -ex
 
-packer_versions=($(cat tf-versions))
+packer_versions=($(cat packer-versions))
 
 for packer_version in "${packer_versions[@]}"
 do
