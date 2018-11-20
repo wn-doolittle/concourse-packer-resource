@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -ex
+
+packer_versions=($(cat tf-versions))
+
+for packer_version in "${packer_versions[@]}"
+do
+  echo "building image for version ${packer_version}"
+    docker build \
+        --build-arg PACKER_VERSION="${packer_version}" \
+        --tag "${DOCKER_REPO}:${packer_version}" \
+        .
+  echo "building test image for version ${packer_version}"
+    docker build \
+        --build-arg APP_IMAGE="${DOCKER_REPO}:${packer_version}" \
+        --tag "${DOCKER_REPO}-tests:${packer_version}" \
+        --file test.Dockerfile \
+        .
+done
+
+for packer_version in "${packer_versions[@]}"
+do
+  echo "running test image for version ${packer_version}"
+  docker \
+    run \
+      --rm \
+      "${DOCKER_REPO}-tests:${packer_version}" python -m unittest discover
+done

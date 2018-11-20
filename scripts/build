@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+set -xeo pipefail
+
+DOCKER_IMAGE_NAME="snapkitchen/concourse-packer-resource"
+
+build_app_image() {
+  # req: app_image
+  # opt: packer_version
+  echo "building app image ${app_image}"
+  docker \
+    build \
+      --rm \
+      --file Dockerfile \
+      --tag "${app_image}" \
+      ${packer_version:+--build-arg "PACKER_VERSION=${packer_version}"} \
+      .
+}
+
+build_test_image() {
+  # req: app_image
+  # req: test_image
+  echo "building test image ${test_image}"
+  docker \
+    build \
+      --rm \
+      --file test.Dockerfile \
+      --build-arg "APP_IMAGE=${app_image}" \
+      ${PTVSD_INSTALL:+--build-arg PTVSD_INSTALL=1} \
+      --tag "${test_image}" \
+      .
+}
+
+# main
+
+if [[ -n "${1:-}" ]]
+then
+  # build specific version
+  packer_version="${1}"
+  app_image="${DOCKER_IMAGE_NAME}:${packer_version}"
+  test_image="${DOCKER_IMAGE_NAME}-tests:${packer_version}"
+
+  if build_app_image
+  then
+    build_test_image
+  fi
+else
+  # build all supported versions
+  packer_versions=($(cat packer-versions))
+
+  for packer_version in "${packer_versions[@]}"
+  do
+    app_image="${DOCKER_IMAGE_NAME}:${packer_version}"
+    test_image="${DOCKER_IMAGE_NAME}-tests:${packer_version}"
+
+    if build_app_image
+    then
+      build_test_image
+    fi
+  done
+fi

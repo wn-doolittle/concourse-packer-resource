@@ -18,6 +18,7 @@ def _test__validate() -> dict:
         '/opt/resource/',
         'test/data/template.json',
         vars={'aws_region': 'us-east-1'},
+        syntax_only=True,
         debug=True)
 
 

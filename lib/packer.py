@@ -160,6 +160,9 @@ def _parse_packer_parsed_output_for_build_manifest(
     return manifest
 
 
+# =============================================================================
+# _read_value_from_var_file
+# =============================================================================
 def _read_value_from_var_file(file_path: str, working_dir=None) -> str:
     # get original working directory
     original_working_dir = os.getcwd()
@@ -238,6 +241,7 @@ def validate(
         var_file_paths: List[str] = None,
         vars: dict = None,
         vars_from_files: dict = None,
+        syntax_only: bool = False,
         debug: bool = False) -> None:
     packer_command_args = []
     # add any specified var file paths
@@ -256,6 +260,9 @@ def validate(
                     file_path,
                     working_dir=working_dir_path)
             packer_command_args.append(f"-var={var_name}={var_value}")
+    # optionally check only syntax
+    if syntax_only:
+        packer_command_args.append('-syntax-only')
     # dump args on debug
     if debug:
         log('validate args:')

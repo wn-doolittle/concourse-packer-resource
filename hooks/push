@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -ex
+
+packer_versions=($(cat packer-versions))
+
+for packer_version in "${packer_versions[@]}"
+do
+  echo "pushing image for version ${packer_version}"
+  docker push "${DOCKER_REPO}:${packer_version}"
+done
