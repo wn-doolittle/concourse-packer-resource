@@ -1,3 +1,7 @@
+2019-01-30
+
+- added packer 1.3.4
+
 2018-10-25
 
 - added 'vars_from_files' dict parameter to out phase
