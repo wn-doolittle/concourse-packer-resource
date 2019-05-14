@@ -112,6 +112,9 @@ def do_out() -> None:
     template_file_path: str = input_payload['params']['template']
     # get the working dir path from the input
     working_dir_path = _get_working_dir_path()
+    # set env vars, if provided
+    if 'env_vars' in input_payload['params']:
+        os.environ.update(input_payload['params']['env_vars'])
     # instantiate the var file paths and vars lists
     var_file_paths: Optional[List[str]] = None
     vars: Optional[Dict] = None
