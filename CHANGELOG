@@ -1,7 +1,7 @@
 2019-05-14
 
 - [enhancement] added 'env_vars' param
-- [enhancement] added 'env_vars_from_file' param
+- [enhancement] added 'env_vars_from_files' param
 
 2019-04-15
 

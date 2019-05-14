@@ -59,15 +59,21 @@ jobs:
 - name: my-ami
   plan:
   - get: my-ami-template
+  - get: role-credentials
   - put: build-ami
     params:
       template: my-ami-template/template.json
       var_files:
       - my-ami-template/my-vars.json
+      env_vars:
+        AWS_DEFAULT_REGION: ((aws_region))
+      env_vars_from_files:
+        AWS_ACCESS_KEY_ID: role-credentials/access-key-id
+        AWS_SECRET_ACCESS_KEY: role-credentials/secret-access-key
+        AWS_SESSION_TOKEN: role-credentials/session-token
       vars:
-        aws_access_key_id: ((aws_access_key_id))
-        aws_secret_access_key: ((aws_secret_access_key))
-        aws_region: ((aws_region))
+        environment: dev
+        package_version: 1.2.3
       vars_from_files:
         commit_ref: my-ami-template/.git/short_ref
 ```
