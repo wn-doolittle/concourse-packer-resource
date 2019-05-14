@@ -26,6 +26,8 @@ a [concourse-ci](https://concourse-ci.org) resource for building images via [pac
 
 - `env_vars`: _optional_. dict of variables to set in the environment.
 
+- `env_vars_from_files`: _optional_. dict of vars and file paths to set in the environment.
+
 - `var_files`: _optional_. the list of paths to [external JSON variable file(s)](https://www.packer.io/docs/templates/user-variables.html).
 
 - `vars`: _optional_. dict of explicit packer variable key/value pairs.

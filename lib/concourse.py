@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional
 
 # local
 import lib.packer
+from lib.io import read_value_from_file
 from lib.log import log, log_pretty
 
 
@@ -42,6 +43,15 @@ def _read_payload(stream=sys.stdin) -> Any:
 # =============================================================================
 def _write_payload(payload: Any, stream=sys.stdout) -> None:
     json.dump(payload, stream)
+
+
+# =============================================================================
+# _process_env_var_files
+# =============================================================================
+def _process_env_var_files(env_var_files: dict, working_dir: str) -> None:
+    for var_name, file_path in env_var_files.items():
+        os.environ[var_name] = (
+            read_value_from_file(file_path, working_dir=working_dir))
 
 
 # =============================================================================
@@ -128,6 +138,9 @@ def do_out() -> None:
     # add vars from files, if provided
     if 'vars_from_files' in input_payload['params']:
         vars_from_files = input_payload['params']['vars_from_files']
+    # set env vars from files, if provided
+    if 'env_vars_from_files' in input_payload['params']:
+        _process_env_var_files(input_payload['params']['vars_from_files'])
     # dump details, if debug enabled
     if debug_enabled:
         log('var_file_paths:')

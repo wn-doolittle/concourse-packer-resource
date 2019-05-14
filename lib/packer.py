@@ -4,6 +4,7 @@ import subprocess
 from typing import List
 
 # local
+from lib.io import read_value_from_file
 from lib.log import log, log_pretty
 
 
@@ -161,26 +162,6 @@ def _parse_packer_parsed_output_for_build_manifest(
 
 
 # =============================================================================
-# _read_value_from_var_file
-# =============================================================================
-def _read_value_from_var_file(file_path: str, working_dir=None) -> str:
-    # get original working directory
-    original_working_dir = os.getcwd()
-    # change to specified working dir
-    if working_dir:
-        os.chdir(working_dir)
-    # read the contents of the var file
-    with open(file_path) as var_file:
-        var_value = var_file.read()
-    # trim any trailing newline
-    var_value = var_value.rstrip('\n')
-    # change back to original working dir
-    if os.getcwd() != original_working_dir:
-        os.chdir(original_working_dir)
-    return var_value
-
-
-# =============================================================================
 #
 # private exe functions
 #
@@ -256,7 +237,7 @@ def validate(
     if vars_from_files:
         for var_name, file_path in vars_from_files.items():
             var_value = \
-                _read_value_from_var_file(
+                read_value_from_file(
                     file_path,
                     working_dir=working_dir_path)
             packer_command_args.append(f"-var={var_name}={var_value}")
@@ -298,7 +279,7 @@ def build(
     if vars_from_files:
         for var_name, file_path in vars_from_files.items():
             var_value = \
-                _read_value_from_var_file(
+                read_value_from_file(
                     file_path,
                     working_dir=working_dir_path)
             packer_command_args.append(f"-var={var_name}={var_value}")

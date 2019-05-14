@@ -42,6 +42,7 @@ COPY \
 COPY \
   lib/__init__.py \
   lib/concourse.py \
+  lib/io.py \
   lib/log.py \
   lib/packer.py \
   /opt/resource/lib/
