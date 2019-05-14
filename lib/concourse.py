@@ -140,7 +140,9 @@ def do_out() -> None:
         vars_from_files = input_payload['params']['vars_from_files']
     # set env vars from files, if provided
     if 'env_vars_from_files' in input_payload['params']:
-        _process_env_var_files(input_payload['params']['vars_from_files'])
+        _process_env_var_files(
+            input_payload['params']['vars_from_files'],
+            working_dir_path)
     # dump details, if debug enabled
     if debug_enabled:
         log('var_file_paths:')
