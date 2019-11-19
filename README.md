@@ -50,6 +50,7 @@ resource_types:
   type: docker-image
   source:
     repository: snapkitchen/concourse-packer-resource
+    tag: 1.4.3
 
 resources:
 - name: build-ami
