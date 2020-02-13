@@ -1,10 +1,15 @@
+2020-02-12
+
+- added packer 1.5.2
+- note: a future release may stop building older versions, they will be noted as [deprecated] for each release
+
 2019-11-07
 
-- Added packer 1.5.1
+- added packer 1.5.1
 
 2019-11-07
 
-- Added packer 1.4.4 and 1.4.5
+- added packer 1.4.4 and 1.4.5
 
 2019-08-03
 
